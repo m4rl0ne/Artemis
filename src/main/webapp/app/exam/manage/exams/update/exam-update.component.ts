@@ -181,6 +181,10 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
         }
     }
 
+    onStartModeChange() {
+        // TODO
+    }
+
     /**
      * Rounds the working time of the exam in minutes such that it only has one decimal place.
      */

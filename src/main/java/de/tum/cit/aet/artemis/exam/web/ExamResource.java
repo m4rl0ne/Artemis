@@ -1357,4 +1357,28 @@ public class ExamResource {
         log.debug("REST request to get deletion summary for exam : {}", examId);
         return ResponseEntity.ok(examDeletionService.getExamDeletionSummary(examId));
     }
+
+    /**
+     * POST /courses/:courseId/exams/:examId/start-exam : Trigger start event for all students in order to start the exam
+     *
+     * @param courseId the id of the course
+     * @param examId   the id of the exam
+     * @return empty ResponseEntity with status 200 (OK)
+     */
+    @PostMapping("courses/{courseId}/exams/{examId}/start-exam")
+    @EnforceAtLeastInstructor
+    public ResponseEntity<Void> startExam(@PathVariable Long courseId, @PathVariable Long examId) {
+        // get all students enrolled in the course
+        log.debug("REST request to start exam {} with courseId {}", examId, courseId);
+        examAccessService.checkCourseAndExamAccessForInstructorElseThrow(courseId, examId);
+        var exam = examRepository.findByIdWithExamUsersElseThrow(examId);
+
+        if (exam.isTestExam()) {
+            throw new BadRequestAlertException("Only real exams can be started dynamically", ENTITY_NAME, "StartExamOnlyForRealExams");
+        }
+
+        // now trigger live event to all students to start the exam
+
+        return ResponseEntity.ok().body(null);
+    }
 }

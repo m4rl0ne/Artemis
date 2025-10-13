@@ -51,6 +51,10 @@ export type ProblemStatementUpdateEvent = ExamLiveEvent & {
     exerciseName: string;
 };
 
+export type ExamStartEvent = ExamLiveEvent & {
+    courseWide: boolean;
+};
+
 @Injectable({ providedIn: 'root' })
 export class ExamParticipationLiveEventsService {
     private websocketService = inject(WebsocketService);

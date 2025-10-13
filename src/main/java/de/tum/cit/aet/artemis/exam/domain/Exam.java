@@ -58,6 +58,12 @@ public class Exam extends DomainObject {
     private boolean examWithAttendanceCheck;
 
     /**
+     * This boolean dictates whether the exam has a fixed start date or if it can be started dynamically
+     */
+    @Column(name = "has_dynamic_start", nullable = false)
+    private boolean hasDynamicStart;
+
+    /**
      * student can see the exam in the UI from this date onwards
      */
     @Column(name = "visible_date", nullable = false)
@@ -200,6 +206,15 @@ public class Exam extends DomainObject {
 
     public void setExamWithAttendanceCheck(boolean examWithAttendanceCheck) {
         this.examWithAttendanceCheck = examWithAttendanceCheck;
+    }
+
+    @NotNull
+    public boolean getHasDynamicStart() {
+        return hasDynamicStart;
+    }
+
+    public void setHasDynamicStart(boolean hasDynamicStart) {
+        this.hasDynamicStart = hasDynamicStart;
     }
 
     @NotNull

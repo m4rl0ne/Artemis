@@ -4,6 +4,7 @@ import {
     ExamAttendanceCheckEvent,
     ExamLiveEvent,
     ExamLiveEventType,
+    ExamStartEvent,
     ExamWideAnnouncementEvent,
     ProblemStatementUpdateEvent,
     WorkingTimeUpdateEvent,
@@ -52,6 +53,10 @@ export class ExamLiveEventComponent {
 
     get problemStatementUpdateEvent(): ProblemStatementUpdateEvent {
         return this.event() as ProblemStatementUpdateEvent;
+    }
+
+    get examStartEvent(): ExamStartEvent {
+        return this.event() as ExamStartEvent;
     }
 
     acknowledgeEvent() {

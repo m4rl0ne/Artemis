@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input, output } from '@angular/core';
+import { Exam } from 'app/exam/shared/entities/exam.model';
 import { TranslateDirective } from 'app/shared/language/translate.directive';
 import { NgClass } from '@angular/common';
 
@@ -9,20 +10,17 @@ import { NgClass } from '@angular/common';
     styleUrl: './exam-start-mode-picker.component.scss',
 })
 export class ExamStartModePickerComponent {
-    // exam = input.required<Exam>();
-    // disableInput = input.required<boolean>();
+    exam = input.required<Exam>();
 
-    isDynamicStart: boolean = true;
-
-    // what does this do
-    // examModeChanged = output();
+    hasDynamicStartChanged = output();
 
     /**
-     * Sets the start mode between dynamic / fixed
-     * @param startMode
+     * Sets the start mode between dynamic / fixed and emit changes
+     * @param hasDynamicStart
      */
-    setDynamicStart(startMode: boolean) {
+    setDynamicStart(hasDynamicStart: boolean) {
         // TODO
-        this.isDynamicStart = startMode;
+        this.exam().hasDynamicStart = hasDynamicStart;
+        this.hasDynamicStartChanged.emit();
     }
 }

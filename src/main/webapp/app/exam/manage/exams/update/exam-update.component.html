@@ -65,7 +65,7 @@
                     <label class="form-check-label" jhiTranslate="artemisApp.examManagement.testExam.examMode"></label>
                     <jhi-help-icon text="artemisApp.examManagement.testExam.examModeTooltip" />
                 </div>
-                <jhi-exam-start-mode-picker />
+                <jhi-exam-start-mode-picker [exam]="exam" (hasDynamicStartChanged)="onStartModeChange()" />
             </div>
             @if (isOngoingExam) {
                 <div class="mb-3">
@@ -96,47 +96,49 @@
                         id="visibleDate"
                     />
                 </div>
-                <div class="col-sm-4">
-                    <jhi-date-time-picker
-                        labelName="{{ 'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.startDate' | artemisTranslate }}"
-                        labelTooltip="{{ 'artemisApp.examManagement.startDateTooltip' | artemisTranslate }}"
-                        [(ngModel)]="exam.startDate"
-                        (valueChange)="updateExamWorkingTime()"
-                        [error]="!isStartDateSet || !isValidStartDate"
-                        [startAt]="exam.startDate || exam.visibleDate"
-                        [requiredField]="true"
-                        name="startDate"
-                        id="startDate"
-                    />
-                    @if (isStartDateSet && isValidStartDateValue && !isValidStartDate) {
-                        <span class="invalid-feedback" jhiTranslate="entity.startDateError"></span>
-                    }
-                </div>
-                <div class="col-sm-4">
-                    <jhi-date-time-picker
-                        labelName="{{ 'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.endDate' | artemisTranslate }}"
-                        labelTooltip="{{ 'artemisApp.examManagement.endDateTooltip' | artemisTranslate }}"
-                        [(ngModel)]="exam.endDate"
-                        (valueChange)="updateExamWorkingTime()"
-                        [error]="!isEndDateSet || !isValidEndDate"
-                        [startAt]="exam.endDate || exam.startDate"
-                        [requiredField]="true"
-                        name="endDate"
-                        id="endDate"
-                    />
-                    @if (isEndDateSet && isValidEndDateValue && !isValidEndDate) {
-                        <span class="invalid-feedback" jhiTranslate="entity.endDateError"></span>
-                    }
-                </div>
+                @if (!exam.hasDynamicStart) {
+                    <div class="col-sm-4">
+                        <jhi-date-time-picker
+                            labelName="{{ 'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.startDate' | artemisTranslate }}"
+                            labelTooltip="{{ 'artemisApp.examManagement.startDateTooltip' | artemisTranslate }}"
+                            [(ngModel)]="exam.startDate"
+                            (valueChange)="updateExamWorkingTime()"
+                            [error]="!isStartDateSet || !isValidStartDate"
+                            [startAt]="exam.startDate || exam.visibleDate"
+                            [requiredField]="true"
+                            name="startDate"
+                            id="startDate"
+                        />
+                        @if (isStartDateSet && isValidStartDateValue && !isValidStartDate) {
+                            <span class="invalid-feedback" jhiTranslate="entity.startDateError"></span>
+                        }
+                    </div>
+                    <div class="col-sm-4">
+                        <jhi-date-time-picker
+                            labelName="{{ 'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.endDate' | artemisTranslate }}"
+                            labelTooltip="{{ 'artemisApp.examManagement.endDateTooltip' | artemisTranslate }}"
+                            [(ngModel)]="exam.endDate"
+                            (valueChange)="updateExamWorkingTime()"
+                            [error]="!isEndDateSet || !isValidEndDate"
+                            [startAt]="exam.endDate || exam.startDate"
+                            [requiredField]="true"
+                            name="endDate"
+                            id="endDate"
+                        />
+                        @if (isEndDateSet && isValidEndDateValue && !isValidEndDate) {
+                            <span class="invalid-feedback" jhiTranslate="entity.endDateError"></span>
+                        }
+                    </div>
+                }
             </div>
             <div class="row mb-3">
                 <div class="col-sm-6">
                     <label class="form-check-label" for="workingTimeInMinutes" jhiTranslate="artemisApp.examManagement.workingTime"></label>
                     <jhi-help-icon [text]="'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.workingTimeTooltip'" />
-                    @if (!exam.testExam) {
+                    @if (!exam.testExam && !exam.hasDynamicStart) {
                         <input readonly disabled type="text" class="form-control" [value]="workingTimeInMinutesRounded" />
                     }
-                    @if (exam.testExam) {
+                    @if (exam.testExam || exam.hasDynamicStart) {
                         <input
                             id="workingTimeInMinutes"
                             name="workingTimeInMinutes"

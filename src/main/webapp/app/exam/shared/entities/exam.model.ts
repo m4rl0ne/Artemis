@@ -10,6 +10,7 @@ export class Exam implements BaseEntity {
     public title?: string;
     public testExam?: boolean;
     public examWithAttendanceCheck?: boolean;
+    public hasDynamicStart?: boolean;
     public visibleDate?: dayjs.Dayjs;
     public startDate?: dayjs.Dayjs;
     public endDate?: dayjs.Dayjs;
@@ -60,5 +61,8 @@ export class Exam implements BaseEntity {
         // helper attributes (calculated by the server at the time of the last request)
         this.visible = false;
         this.started = false;
+
+        // TODO: remove this
+        this.hasDynamicStart = false;
     }
 }
