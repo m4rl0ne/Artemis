@@ -1,0 +1,6 @@
+<div id="exam-start-mode-picker" class="d-flex align-items-start">
+    <div class="btn-group">
+        <div id="standard-mode" class="btn" [class.btn-success]="isDynamicStart" [class.btn-default]="!isDynamicStart" (click)="setDynamicStart(true)">Dynamischer Start</div>
+        <div id="test-mode" class="btn btn-default" [class.btn-primary]="!isDynamicStart" [class.btn-default]="isDynamicStart" (click)="setDynamicStart(false)">Fester Start</div>
+    </div>
+</div>

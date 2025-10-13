@@ -59,6 +59,14 @@
             <hr />
             <!-- Section exam conduction (release dates and working time) -->
             <h5 class="pb-1" jhiTranslate="artemisApp.examManagement.sections.conduction"></h5>
+            <!-- Switch between dynamic and fixed start -->
+            <div class="form-group">
+                <div>
+                    <label class="form-check-label" jhiTranslate="artemisApp.examManagement.testExam.examMode"></label>
+                    <jhi-help-icon text="artemisApp.examManagement.testExam.examModeTooltip" />
+                </div>
+                <jhi-exam-start-mode-picker />
+            </div>
             @if (isOngoingExam) {
                 <div class="mb-3">
                     <span class="d-inline-flex" ngbTooltip="{{ 'artemisApp.examManagement.dateChange.message' | artemisTranslate }}">

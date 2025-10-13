@@ -29,6 +29,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { FormDateTimePickerComponent } from 'app/shared/date-time-picker/date-time-picker.component';
 import { MarkdownEditorMonacoComponent } from 'app/shared/markdown-editor/monaco/markdown-editor-monaco.component';
 import { CalendarService } from 'app/core/calendar/shared/service/calendar.service';
+import { ExamStartModePickerComponent } from 'app/exam/manage/exams/exam-start-mode-picker/exam-start-mode-picker.component';
 
 @Component({
     selector: 'jhi-exam-update',
@@ -47,6 +48,7 @@ import { CalendarService } from 'app/core/calendar/shared/service/calendar.servi
         ExamExerciseImportComponent,
         MarkdownEditorMonacoComponent,
         ArtemisTranslatePipe,
+        ExamStartModePickerComponent,
     ],
 })
 export class ExamUpdateComponent implements OnInit, OnDestroy {
