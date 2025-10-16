@@ -165,7 +165,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * Updates the working time for real exams based on the start and end dates.
      */
     updateExamWorkingTime() {
-        if (this.exam.testExam) return;
+        if (this.exam.testExam || this.exam.hasDynamicStart) return;
 
         this.exam.workingTime = examWorkingTime(this.exam) ?? 0;
     }
@@ -182,7 +182,15 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
     }
 
     onStartModeChange() {
-        // TODO
+        // TODO: is this the best solution?
+        // in order to not confuse the rest of the system, the start and end dates are well in the future
+        if (this.exam.hasDynamicStart) {
+            this.exam.startDate = dayjs().add(10, 'year');
+            this.exam.endDate = dayjs().add(11, 'year');
+        } else {
+            this.exam.startDate = dayjs();
+            this.exam.endDate = dayjs();
+        }
     }
 
     /**
@@ -200,7 +208,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * @returns {boolean} true if the visibility date is more than 4 hours before the start date, false otherwise.
      */
     get checkExamVisibilityTime(): boolean {
-        if (!this.isVisibleDateSet || !this.isStartDateSet) {
+        if (!this.isVisibleDateSet || !this.isStartDateSet || this.exam.hasDynamicStart) {
             return false;
         }
 
@@ -334,7 +342,8 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
 
     get isValidConfiguration(): boolean {
         const examConductionDatesValid =
-            this.isVisibleDateSet && this.isStartDateSet && this.isValidStartDate && this.isEndDateSet && this.isValidEndDate && this.isValidVisibleDateValue;
+            (this.isVisibleDateSet && this.isStartDateSet && this.isValidStartDate && this.isEndDateSet && this.isValidEndDate && this.isValidVisibleDateValue) ||
+            this.exam.hasDynamicStart!;
         const examReviewDatesValid = this.isValidPublishResultsDate && this.isValidExamStudentReviewStart && this.isValidExamStudentReviewEnd;
         const examNumberOfCorrectionsValid = this.isValidNumberOfCorrectionRounds;
         const examMaxPointsValid = this.isValidMaxPoints;
@@ -459,6 +468,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * Validates the WorkingTime.
      * For test exams, the WorkingTime should be at least 1 and smaller / equal to the working window
      * For real exams, the WorkingTime is calculated based on the startDate and EndDate and should match the time difference.
+     * If the exam has dynamicStart enabled, the working time can be arbitrarely set
      */
     get validateWorkingTime(): boolean {
         if (this.exam.testExam) {
@@ -470,8 +480,11 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
             }
             return false;
         }
-        if (this.exam.workingTime && this.exam.startDate && this.exam.endDate) {
+        if (this.exam.workingTime && this.exam.startDate && this.exam.endDate && !this.exam.hasDynamicStart) {
             return this.exam.workingTime === dayjs(this.exam.endDate).diff(this.exam.startDate, 's');
+        }
+        if (this.exam.hasDynamicStart) {
+            return true;
         }
         return false;
     }

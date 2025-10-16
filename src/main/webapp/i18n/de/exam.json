@@ -455,6 +455,8 @@
             "courseTitle": "Kursname",
             "examId": "Klausur ID",
             "examTitle": "Klausurname",
+            "startModeFixed": "Fester Start",
+            "startModeDynamic": "Dynamischer Start",
             "visibleDate": "Sichtbar ab",
             "visibleDateTooltip": "Studierende sehen die Klausur und können die Startseite ab diesem Zeitpunkt aufrufen, haben aber noch keinen Zugriff auf die Aufgaben",
             "startDate": "Bearbeitungszeit ab",
@@ -632,6 +634,7 @@
             "checklist": {
                 "title": "Checkliste für die Durchführung von Prüfungen",
                 "conductionPlannedFromTo": "Die Durchführung ist vom {{ from }} bis {{ to }} geplant",
+                "conductionManualStart": "Die Klausur muss manuell gestartet werden",
                 "introduction": "Diese Seite gibt einen Überblick über die verschiedenen Schritte zur Durchführung von Prüfungen. Genauere Erklärungen zu den einzelnen Schritten können in der",
                 "linkDescription": "externen Dokumentation",
                 "introductionPart2": "eingesehen werden.",
@@ -661,7 +664,10 @@
                     "exportResults": "Exportieren der Klausurergebnisse",
                     "editWorkingTime": "Bearbeiten der Prüfungsdauer",
                     "createAnnouncement": "Erstellen einer Ankündigung",
-                    "suspiciousBehavior": "Überprüfung von verdächtigem Verhalten"
+                    "suspiciousBehavior": "Überprüfung von verdächtigem Verhalten",
+                    "startExam": "Klausur starten",
+                    "startExamExplanation": "Die Klausur kann für alle Studierenden mit dem Knopf rechts gestartet werden. Warnung: Momentan prüft der Knopf keine Voraussetzungen...",
+                    "startExamButton": "Starten"
                 },
                 "descriptionItem": {
                     "register": "Studierende können auf drei verschiedene Arten registriert werden: einzeln, per CSV-Datei oder es können alle zum Kurs der Klausur angemeldeten Studierenden auf einmal angemeldet werden.",

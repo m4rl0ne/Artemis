@@ -472,10 +472,11 @@ public class ExamResource {
                 throw new BadRequestAlertException("For TestExams, the working time must be at least 1 and at most the duration of the working window.", ENTITY_NAME, "examTimes");
             }
         }
-        else if (exam.getWorkingTime() != examDuration) {
+        else if (exam.getWorkingTime() != examDuration && !exam.getHasDynamicStart()) {
             /*
              * Set the working time to the time difference for real exams, if not done by the client. This can be an issue if the working time calculation in the client is not
              * performed (e.g. for Cypress-2E2-Tests). However, since the working time currently depends on the start- and end-date, we can do a server-side assignment
+             * This currently does not work for dynamically started exams, as the duration is arbitrary
              */
             exam.setWorkingTime(examDuration);
         }
@@ -1377,7 +1378,16 @@ public class ExamResource {
             throw new BadRequestAlertException("Only real exams can be started dynamically", ENTITY_NAME, "StartExamOnlyForRealExams");
         }
 
+        // update start date in DB
+        exam.setStartDate(now());
+        exam.setEndDate(exam.getStartDate().plusSeconds(exam.getWorkingTime()));
+        examRepository.save(exam);
+        log.debug("Saved new dynamic start for exam {} with courseId {}", examId, courseId);
+
         // now trigger live event to all students to start the exam
+        // TODO: is courseWide necessary?
+        examLiveEventsService.createAndSendExamStartEvent(exam, exam.getStartDate(), true);
+        log.debug("Sent start event for all users? {} with starting time {} for exam {} with courseId {}", true, exam.getStartDate(), examId, courseId);
 
         return ResponseEntity.ok().body(null);
     }

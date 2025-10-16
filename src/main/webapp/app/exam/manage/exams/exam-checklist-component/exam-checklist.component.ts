@@ -1,7 +1,7 @@
 import { Component, OnChanges, OnDestroy, OnInit, inject, input } from '@angular/core';
 import { Exam } from 'app/exam/shared/entities/exam.model';
 import { ExamChecklist } from 'app/exam/shared/entities/exam-checklist.model';
-import { faChartBar, faEye, faListAlt, faThList, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faEye, faListAlt, faPlay, faThList, faUser, faWrench } from '@fortawesome/free-solid-svg-icons';
 import { ExamChecklistService } from 'app/exam/manage/exams/exam-checklist-component/exam-checklist.service';
 import { WebsocketService } from 'app/shared/service/websocket.service';
 import { ExamManagementService } from 'app/exam/manage/services/exam-management.service';
@@ -72,6 +72,8 @@ export class ExamChecklistComponent implements OnChanges, OnInit, OnDestroy {
     isExamOver = false;
     longestWorkingTime?: number;
 
+    examCanBeStarted: boolean = false;
+
     numberOfSubmitted = 0;
     numberOfStarted = 0;
 
@@ -84,6 +86,7 @@ export class ExamChecklistComponent implements OnChanges, OnInit, OnDestroy {
     faListAlt = faListAlt;
     faThList = faThList;
     faChartBar = faChartBar;
+    faPlay = faPlay;
 
     private dialogErrorSource = new Subject<string>();
     dialogError$ = this.dialogErrorSource.asObservable();
@@ -108,6 +111,8 @@ export class ExamChecklistComponent implements OnChanges, OnInit, OnDestroy {
                 .exerciseGroups?.flatMap((group) => group.exercises)
                 .filter((exercise) => exercise !== undefined)
                 .filter((exercise) => !this.isExerciseTypeEnabled(profileInfo.activeModuleFeatures, exercise?.type)) ?? [];
+
+        this.examCanBeStarted = this.checkExamStartPreconditions();
     }
 
     ngOnChanges() {
@@ -210,6 +215,49 @@ export class ExamChecklistComponent implements OnChanges, OnInit, OnDestroy {
             // For now, all exercises are enabled by default
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Calculate if the exam can now be started, has to have dynamic start enabled and it must be already visible
+     * TODO: Check the checklist if everything is ready to start
+     */
+    private checkExamStartPreconditions(): boolean {
+        const exam = this.exam?.();
+        if (!exam || !exam.endDate) {
+            return false;
+        }
+
+        const examRunning = dayjs().isBetween(exam.startDate, exam.endDate);
+        const hasDynamicStart = !!exam.hasDynamicStart;
+        const visibleDatePassed = dayjs(exam.visibleDate).isBefore(dayjs());
+
+        return !examRunning && hasDynamicStart && visibleDatePassed && !this.isExamOver;
+    }
+
+    /**
+     * Async request to start the exam
+     */
+    startExam(): void {
+        // TODO: Remove this, just for testing purposes
+        if (confirm('Starten?')) {
+            const exam = this.exam();
+            if (exam.course?.id && exam.id) {
+                this.examManagementService.startExam(exam.course.id, exam.id).subscribe({
+                    next: (res) => {
+                        // TODO show success message
+                        this.alertService.success('Klausur gestartet');
+                        this.examCanBeStarted = false;
+                    },
+                    error: (error: HttpErrorResponse) => {
+                        this.dialogErrorSource.next(error.message);
+                        this.alertService.error('Klausur konnte nicht gestartet werden!');
+                        this.examCanBeStarted = true;
+                    },
+                });
+            } else {
+                captureException(new Error(`Exam could not be started due to missing course ID or exam ID`));
+            }
         }
     }
 }

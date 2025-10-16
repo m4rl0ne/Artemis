@@ -455,6 +455,8 @@
             "courseTitle": "Course Title",
             "examId": "Exam ID",
             "examTitle": "Exam Title",
+            "startModeFixed": "Fixed start",
+            "startModeDynamic": "Dynamic start",
             "visibleDate": "Visible from",
             "visibleDateTooltip": "Students can see the exam and open the start page from this time onwards, but cannot access the exercises",
             "startDate": "Start of working time",
@@ -632,6 +634,7 @@
             "checklist": {
                 "title": "Exam Checklist",
                 "conductionPlannedFromTo": "The conduction is planned from {{ from }} to {{ to }}",
+                "conductionManualStart": "The exam has to be started manually",
                 "introduction": "This page gives an overview over the various steps when conducting an exam. In the",
                 "linkDescription": "external documentation",
                 "introductionPart2": "you can find more details about the individual steps.",
@@ -661,7 +664,10 @@
                     "exportResults": "Export the exam results",
                     "editWorkingTime": "Edit the exam duration",
                     "createAnnouncement": "Create an announcement",
-                    "suspiciousBehavior": "Check for suspicious behavior"
+                    "suspiciousBehavior": "Check for suspicious behavior",
+                    "startExam": "Start the exam",
+                    "startExamExplanation": "The exam can be started for all students using the button on the right. Caution: At the moment, the button does not check any preconditions...",
+                    "startExamButton": "Start"
                 },
                 "descriptionItem": {
                     "register": "You can register students for the exam in three different ways: via a CSV file, manually, or by importing all students registered in the course.",

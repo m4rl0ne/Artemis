@@ -512,4 +512,13 @@ export class ExamManagementService {
     getExercisesWithPotentialPlagiarismForExam(courseId: number, examId: number): Observable<Exercise[]> {
         return this.http.get<Exercise[]>(`${this.resourceUrl}/${courseId}/exams/${examId}/exercises-with-potential-plagiarism`);
     }
+
+    /**
+     * Sends the start event to the backend to dynamically start the exam for all students
+     * @param courseId the id of the course of the exam
+     * @param examId The id of the exam to archive
+     */
+    startExam(courseId: number, examId: number): Observable<HttpResponse<any>> {
+        return this.http.post(`${this.resourceUrl}/${courseId}/exams/${examId}/start-exam`, {}, { observe: 'response' });
+    }
 }

@@ -44,6 +44,7 @@ import { CourseExerciseService } from 'app/exercise/course-exercises/course-exer
 import {
     ExamLiveEventType,
     ExamParticipationLiveEventsService,
+    ExamStartEvent,
     ProblemStatementUpdateEvent,
     WorkingTimeUpdateEvent,
 } from 'app/exam/overview/services/exam-participation-live-events.service';
@@ -159,6 +160,7 @@ export class ExamParticipationComponent implements OnInit, OnDestroy, ComponentC
     workingTimeUpdateEventsSubscription?: Subscription;
     problemStatementUpdateEventsSubscription?: Subscription;
     studentExamSubscription?: Subscription;
+    examStartEventSubscription?: Subscription;
 
     sidebarData: SidebarData;
     sidebarExercises: SidebarCardElement[] = [];
@@ -256,6 +258,8 @@ export class ExamParticipationComponent implements OnInit, OnDestroy, ComponentC
         this.websocketSubscription = this.websocketService.connectionState.subscribe((status) => {
             this.connected = status.connected;
         });
+
+        this.subscribeToExamStartEvent();
     }
 
     /**
@@ -624,6 +628,7 @@ export class ExamParticipationComponent implements OnInit, OnDestroy, ComponentC
         this.workingTimeUpdateEventsSubscription?.unsubscribe();
         this.problemStatementUpdateEventsSubscription?.unsubscribe();
         this.studentExamSubscription?.unsubscribe();
+        this.examStartEventSubscription?.unsubscribe();
         this.examParticipationService.resetExamLayout();
         window.clearInterval(this.autoSaveInterval);
     }
@@ -715,6 +720,28 @@ export class ExamParticipationComponent implements OnInit, OnDestroy, ComponentC
                 this.updateProblemStatement(event);
                 this.liveEventsService.acknowledgeEvent(event, false);
             });
+    }
+
+    private subscribeToExamStartEvent() {
+        if (this.examStartEventSubscription) {
+            this.examStartEventSubscription.unsubscribe();
+        }
+
+        this.examStartEventSubscription = this.liveEventsService.observeNewEventsAsSystem([ExamLiveEventType.EXAM_START_EVENT]).subscribe((event: ExamStartEvent) => {
+            // now update studentExams with new start date and individual end date
+
+            this.exam.startDate = dayjs(event.startDate);
+            this.exam.endDate = dayjs(event.startDate).add(this.exam.workingTime!, 'seconds');
+
+            this.studentExam = { ...this.studentExam, startedDate: event.startDate! };
+            this.examParticipationService.currentlyLoadedStudentExam.next(this.studentExam);
+            this.individualStudentEndDate = dayjs(event.startDate).add(this.studentExam.workingTime!, 'seconds');
+            this.individualStudentEndDateWithGracePeriod = this.individualStudentEndDate.clone().add(this.exam.gracePeriod!, 'seconds');
+
+            this.isActive();
+
+            this.liveEventsService.acknowledgeEvent(event, false);
+        });
     }
 
     /**

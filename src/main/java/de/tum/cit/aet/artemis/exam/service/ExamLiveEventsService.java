@@ -1,5 +1,7 @@
 package de.tum.cit.aet.artemis.exam.service;
 
+import java.time.ZonedDateTime;
+
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import de.tum.cit.aet.artemis.exam.domain.Exam;
 import de.tum.cit.aet.artemis.exam.domain.StudentExam;
 import de.tum.cit.aet.artemis.exam.domain.event.ExamAttendanceCheckEvent;
 import de.tum.cit.aet.artemis.exam.domain.event.ExamLiveEvent;
+import de.tum.cit.aet.artemis.exam.domain.event.ExamStartEvent;
 import de.tum.cit.aet.artemis.exam.domain.event.ExamWideAnnouncementEvent;
 import de.tum.cit.aet.artemis.exam.domain.event.ProblemStatementUpdateEvent;
 import de.tum.cit.aet.artemis.exam.domain.event.WorkingTimeUpdateEvent;
@@ -153,6 +156,23 @@ public class ExamLiveEventsService {
         event.setProblemStatement(exercise.getProblemStatement());
         event.setExerciseId(exercise.getId());
         event.setExerciseName(exercise.getExerciseGroup().getTitle());
+
+        this.storeAndDistributeLiveExamEvent(event);
+    }
+
+    /**
+     * Sends the start event in order to start the exam
+     *
+     * @param exam       the exam to send the announcement to.
+     * @param startDate  the new dynamically calculated start date (same as in DB)
+     * @param courseWide should everyone get the start event?
+     */
+    public void createAndSendExamStartEvent(Exam exam, ZonedDateTime startDate, boolean courseWide) {
+        var event = new ExamStartEvent();
+
+        event.setExamId(exam.getId());
+        event.setCourseWide(courseWide);
+        event.setStartDate(startDate);
 
         this.storeAndDistributeLiveExamEvent(event);
     }

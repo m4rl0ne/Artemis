@@ -1,5 +1,7 @@
 package de.tum.cit.aet.artemis.exam.domain.event;
 
+import java.time.ZonedDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -19,6 +21,9 @@ public class ExamStartEvent extends ExamLiveEvent {
     @Column(name = "courseWide")
     private boolean courseWide;
 
+    @Column(name = "startDate")
+    private ZonedDateTime startDate;
+
     public boolean getCourseWide() {
         return courseWide;
     }
@@ -27,8 +32,16 @@ public class ExamStartEvent extends ExamLiveEvent {
         this.courseWide = courseWide;
     }
 
+    public ZonedDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(ZonedDateTime startDate) {
+        this.startDate = startDate;
+    }
+
     @Override
     public ExamStartEventDTO asDTO() {
-        return new ExamStartEventDTO(this.getId(), this.getCreatedDate(), courseWide);
+        return new ExamStartEventDTO(this.getId(), this.getCreatedDate(), startDate, courseWide);
     }
 }

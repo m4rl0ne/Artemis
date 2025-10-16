@@ -2,8 +2,11 @@
     @for (informationBoxData of examInformationBoxData; track informationBoxData) {
         <jhi-information-box [informationBoxData]="informationBoxData">
             <ng-container contentComponent>
-                @if (informationBoxData.content.type === 'dateTime') {
+                @if (informationBoxData.content.type === 'dateTime' && !exam.hasDynamicStart) {
                     <span contentComponent>{{ informationBoxData.content.value | artemisDate }}</span>
+                }
+                @if (informationBoxData.content.type === 'dateTime' && exam.hasDynamicStart) {
+                    <span contentComponent>{{ informationBoxData.content.value | artemisDate: 'long-date' }}</span>
                 }
                 @if (informationBoxData.content.type === 'workingTime') {
                     <jhi-student-exam-working-time [studentExam]="informationBoxData.content.value" />

@@ -20,6 +20,7 @@ export enum ExamLiveEventType {
     WORKING_TIME_UPDATE = 'workingTimeUpdate',
     EXAM_ATTENDANCE_CHECK = 'examAttendanceCheck',
     PROBLEM_STATEMENT_UPDATE = 'problemStatementUpdate',
+    EXAM_START_EVENT = 'examStart',
 }
 
 export type ExamLiveEvent = {
@@ -52,6 +53,7 @@ export type ProblemStatementUpdateEvent = ExamLiveEvent & {
 };
 
 export type ExamStartEvent = ExamLiveEvent & {
+    startDate: dayjs.Dayjs;
     courseWide: boolean;
 };
 

@@ -138,7 +138,7 @@
                     @if (!exam.testExam && !exam.hasDynamicStart) {
                         <input readonly disabled type="text" class="form-control" [value]="workingTimeInMinutesRounded" />
                     }
-                    @if (exam.testExam || exam.hasDynamicStart) {
+                    @if (exam.testExam && !exam.hasDynamicStart) {
                         <input
                             id="workingTimeInMinutes"
                             name="workingTimeInMinutes"
@@ -146,6 +146,18 @@
                             type="number"
                             min="1"
                             [max]="maxWorkingTimeInMinutes"
+                            [(ngModel)]="workingTimeInMinutes"
+                            (focusin)="roundWorkingTime()"
+                            (focusout)="roundWorkingTime()"
+                        />
+                    }
+                    @if (!exam.testExam && exam.hasDynamicStart) {
+                        <input
+                            id="workingTimeInMinutes"
+                            name="workingTimeInMinutes"
+                            class="form-control"
+                            type="number"
+                            min="1"
                             [(ngModel)]="workingTimeInMinutes"
                             (focusin)="roundWorkingTime()"
                             (focusout)="roundWorkingTime()"

@@ -259,13 +259,17 @@
         </div>
         <hr />
         <h3 jhiTranslate="artemisApp.examStatus.conduction.{{ isTestExam ? 'testExam.' : '' }}examConduction"></h3>
-        <b
-            jhiTranslate="artemisApp.examManagement.checklist.conductionPlannedFromTo"
-            [translateValues]="{
-                from: exam().startDate! | artemisDate,
-                to: exam().endDate! | artemisDate,
-            }"
-        ></b>
+        @if (!this.exam().hasDynamicStart) {
+            <b
+                jhiTranslate="artemisApp.examManagement.checklist.conductionPlannedFromTo"
+                [translateValues]="{
+                    from: exam().startDate! | artemisDate,
+                    to: exam().endDate! | artemisDate,
+                }"
+            ></b>
+        } @else {
+            <b jhiTranslate="artemisApp.examManagement.checklist.conductionManualStart"></b>
+        }
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
@@ -345,8 +349,29 @@
                             </a>
                         </td>
                     </tr>
+                    @if (exam().hasDynamicStart) {
+                        <tr>
+                            <td>2</td>
+                            <td>
+                                <span jhiTranslate="artemisApp.examManagement.checklist.tableItem.startExam"></span>
+                            </td>
+                            <td>
+                                <span jhiTranslate="artemisApp.examManagement.checklist.tableItem.startExamExplanation"></span>
+                            </td>
+                            <td>
+                                <button class="btn btn-success" [disabled]="!examCanBeStarted" (click)="startExam()">
+                                    <fa-icon [icon]="faPlay" />
+                                    <span jhiTranslate="artemisApp.examManagement.checklist.tableItem.startExamButton"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                     <tr>
-                        <td>2</td>
+                        @if (exam().hasDynamicStart) {
+                            <td>3</td>
+                        } @else {
+                            <td>2</td>
+                        }
                         <td>
                             <span jhiTranslate="artemisApp.examManagement.checklist.tableItem.editWorkingTime"></span>
                         </td>
@@ -357,10 +382,12 @@
                             <jhi-exam-edit-working-time [exam]="exam()" />
                         </td>
                     </tr>
-                </tbody>
-                <tbody>
                     <tr>
-                        <td>3</td>
+                        @if (exam().hasDynamicStart) {
+                            <td>4</td>
+                        } @else {
+                            <td>3</td>
+                        }
                         <td>
                             <span jhiTranslate="artemisApp.examManagement.checklist.tableItem.createAnnouncement"></span>
                         </td>

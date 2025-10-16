@@ -1,8 +1,13 @@
 <div id="exam-start-mode-picker" class="d-flex align-items-start">
     <div class="btn-group">
-        <div id="fixed-start-mode" class="btn" [class.btn-success]="!exam().hasDynamicStart" [class.btn-default]="exam().hasDynamicStart" (click)="setDynamicStart(false)">
-            Fester Start
-        </div>
+        <div
+            id="fixed-start-mode"
+            class="btn"
+            [class.btn-success]="!exam().hasDynamicStart"
+            [class.btn-default]="exam().hasDynamicStart"
+            (click)="setDynamicStart(false)"
+            jhiTranslate="artemisApp.examManagement.startModeFixed"
+        ></div>
 
         <div
             id="dynamic-start-mode"
@@ -10,8 +15,7 @@
             [class.btn-primary]="exam().hasDynamicStart"
             [class.btn-default]="!exam().hasDynamicStart"
             (click)="setDynamicStart(true)"
-        >
-            Dynamischer Start
-        </div>
+            jhiTranslate="artemisApp.examManagement.startModeDynamic"
+        ></div>
     </div>
 </div>
