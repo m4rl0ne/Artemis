@@ -97,6 +97,7 @@
                     />
                 </div>
                 @if (!exam.hasDynamicStart) {
+                    <!-- fixed exam start -->
                     <div class="col-sm-4">
                         <jhi-date-time-picker
                             labelName="{{ 'artemisApp.examManagement' + (exam.testExam ? '.testExam' : '') + '.startDate' | artemisTranslate }}"
@@ -128,6 +129,34 @@
                         @if (isEndDateSet && isValidEndDateValue && !isValidEndDate) {
                             <span class="invalid-feedback" jhiTranslate="entity.endDateError"></span>
                         }
+                    </div>
+                } @else {
+                    <!-- dynamic exam start, only planned dates -->
+                    <div class="col-sm-4">
+                        <jhi-date-time-picker
+                            labelName="{{ 'artemisApp.examManagement.plannedStartDate' | artemisTranslate }}"
+                            labelTooltip="{{ 'artemisApp.examManagement.plannedStartDateTooltip' | artemisTranslate }}"
+                            [(ngModel)]="exam.plannedStartDate"
+                            [error]="!isStartDateSet || !isValidStartDate"
+                            [startAt]="exam.plannedStartDate || exam.visibleDate"
+                            name="plannedStartDate"
+                            id="plannedStartDate"
+                        />
+                        @if (!isStartDateSet) {
+                            <span class="invalid-feedback" jhiTranslate="entity.plannedStartDateError"></span>
+                        }
+                    </div>
+                    <div class="col-sm-4">
+                        <jhi-date-time-picker
+                            labelName="{{ 'artemisApp.examManagement.plannedEndDate' | artemisTranslate }}"
+                            labelTooltip="{{ 'artemisApp.examManagement.plannedEndDateTooltip' | artemisTranslate }}"
+                            [(ngModel)]="exam.plannedEndDate"
+                            [startAt]="exam.plannedEndDate || exam.plannedStartDate"
+                            [error]="!isEndDateSet || !isValidEndDate"
+                            [requiredField]="!!exam.plannedStartDate"
+                            name="plannedEndDate"
+                            id="plannedEndDate"
+                        />
                     </div>
                 }
             </div>

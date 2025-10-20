@@ -259,7 +259,16 @@
         </div>
         <hr />
         <h3 jhiTranslate="artemisApp.examStatus.conduction.{{ isTestExam ? 'testExam.' : '' }}examConduction"></h3>
-        @if (!this.exam().hasDynamicStart) {
+        @if (this.exam().hasDynamicStart) {
+            <b jhiTranslate="artemisApp.examManagement.checklist.conductionManualStart"></b>
+            <b
+                jhiTranslate="artemisApp.examManagement.checklist.conductionPlannedFromTo"
+                [translateValues]="{
+                    from: exam().plannedStartDate! | artemisDate,
+                    to: exam().plannedEndDate! | artemisDate,
+                }"
+            ></b>
+        } @else {
             <b
                 jhiTranslate="artemisApp.examManagement.checklist.conductionPlannedFromTo"
                 [translateValues]="{
@@ -267,8 +276,6 @@
                     to: exam().endDate! | artemisDate,
                 }"
             ></b>
-        } @else {
-            <b jhiTranslate="artemisApp.examManagement.checklist.conductionManualStart"></b>
         }
         <div class="table-responsive">
             <table class="table table-striped">

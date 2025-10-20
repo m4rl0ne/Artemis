@@ -434,27 +434,42 @@ public class ExamResource {
      * Checks that the visible/start/end-dates are present and in the correct order.
      * For real exams: visibleDate < startDate < endDate
      * For test exams: visibleDate <= startDate < endDate
+     * For real exams with dynamic start: visible date, start date, end date should be set
      *
      * @param exam the exam to be checked
      */
     private void checkExamForDatesConflictsElseThrow(Exam exam) {
-        if (exam.getVisibleDate() == null || exam.getStartDate() == null || exam.getEndDate() == null) {
-            throw new BadRequestAlertException("An exam has to have times when it becomes visible, starts, and ends as well as a working time.", ENTITY_NAME, "examTimes");
-        }
+        if (exam.getHasDynamicStart()) {
+            if (exam.getVisibleDate() == null || exam.getPlannedStartDate() == null || exam.getPlannedEndDate() == null) {
+                throw new BadRequestAlertException("An exam with dynamic start has to have times when it becomes visible, starts, and ends as well as a working time.", ENTITY_NAME,
+                        "examTimes");
+            }
 
-        if (exam.isTestExam()) {
-            if (!(exam.getVisibleDate().isBefore(exam.getStartDate()) || exam.getVisibleDate().isEqual(exam.getStartDate())) || !exam.getStartDate().isBefore(exam.getEndDate())) {
-                throw new BadRequestAlertException("For test exams, the visible date has to be before or equal to the start date and the start date has to be before the end date",
-                        ENTITY_NAME, "examTimes");
+            if (exam.getExampleSolutionPublicationDate() != null && exam.getExampleSolutionPublicationDate().isBefore(exam.getPlannedEndDate())) {
+                throw new BadRequestAlertException("Example solutions cannot be published before the end date of an exam.", ENTITY_NAME, "examTimes");
             }
         }
-        else if (!exam.getVisibleDate().isBefore(exam.getStartDate()) || !exam.getStartDate().isBefore(exam.getEndDate())) {
-            throw new BadRequestAlertException("For real exams, the visible date has to be before the start date and the start date has to be before the end date", ENTITY_NAME,
-                    "examTimes");
-        }
+        else {
+            if (exam.getVisibleDate() == null || exam.getStartDate() == null || exam.getEndDate() == null) {
+                throw new BadRequestAlertException("An exam has to have times when it becomes visible, starts, and ends as well as a working time.", ENTITY_NAME, "examTimes");
+            }
 
-        if (exam.getExampleSolutionPublicationDate() != null && exam.getExampleSolutionPublicationDate().isBefore(exam.getEndDate())) {
-            throw new BadRequestAlertException("Example solutions cannot be published before the end date of an exam.", ENTITY_NAME, "examTimes");
+            if (exam.isTestExam()) {
+                if (!(exam.getVisibleDate().isBefore(exam.getStartDate()) || exam.getVisibleDate().isEqual(exam.getStartDate()))
+                        || !exam.getStartDate().isBefore(exam.getEndDate())) {
+                    throw new BadRequestAlertException(
+                            "For test exams, the visible date has to be before or equal to the start date and the start date has to be before the end date", ENTITY_NAME,
+                            "examTimes");
+                }
+            }
+            else if (!exam.getVisibleDate().isBefore(exam.getStartDate()) || !exam.getStartDate().isBefore(exam.getEndDate())) {
+                throw new BadRequestAlertException("For real exams, the visible date has to be before the start date and the start date has to be before the end date", ENTITY_NAME,
+                        "examTimes");
+            }
+
+            if (exam.getExampleSolutionPublicationDate() != null && exam.getExampleSolutionPublicationDate().isBefore(exam.getEndDate())) {
+                throw new BadRequestAlertException("Example solutions cannot be published before the end date of an exam.", ENTITY_NAME, "examTimes");
+            }
         }
     }
 
@@ -472,7 +487,7 @@ public class ExamResource {
                 throw new BadRequestAlertException("For TestExams, the working time must be at least 1 and at most the duration of the working window.", ENTITY_NAME, "examTimes");
             }
         }
-        else if (exam.getWorkingTime() != examDuration && !exam.getHasDynamicStart()) {
+        else if (exam.getWorkingTime() != examDuration) {
             /*
              * Set the working time to the time difference for real exams, if not done by the client. This can be an issue if the working time calculation in the client is not
              * performed (e.g. for Cypress-2E2-Tests). However, since the working time currently depends on the start- and end-date, we can do a server-side assignment

@@ -63,6 +63,12 @@ public class Exam extends DomainObject {
     @Column(name = "has_dynamic_start", nullable = false)
     private boolean hasDynamicStart;
 
+    @Column(name = "planned_start_date")
+    private ZonedDateTime plannedStartDate;
+
+    @Column(name = "planned_end_date")
+    private ZonedDateTime plannedEndDate;
+
     /**
      * student can see the exam in the UI from this date onwards
      */
@@ -215,6 +221,22 @@ public class Exam extends DomainObject {
 
     public void setHasDynamicStart(boolean hasDynamicStart) {
         this.hasDynamicStart = hasDynamicStart;
+    }
+
+    public ZonedDateTime getPlannedStartDate() {
+        return plannedStartDate;
+    }
+
+    public void setPlannedStartDate(ZonedDateTime plannedStartDate) {
+        this.plannedStartDate = plannedStartDate;
+    }
+
+    public ZonedDateTime getPlannedEndDate() {
+        return plannedEndDate;
+    }
+
+    public void setPlannedEndDate(ZonedDateTime plannedEndDate) {
+        this.plannedEndDate = plannedEndDate;
     }
 
     @NotNull

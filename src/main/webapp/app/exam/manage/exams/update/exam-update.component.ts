@@ -101,6 +101,13 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
                     exam.numberOfCorrectionRoundsInExam = 1;
                 }
 
+                if (exam.hasDynamicStart && exam.plannedStartDate) {
+                    exam.plannedStartDate = dayjs(exam.plannedStartDate);
+                }
+                if (exam.hasDynamicStart && exam.plannedEndDate) {
+                    exam.plannedEndDate = dayjs(exam.plannedEndDate);
+                }
+
                 this.exam = exam;
                 this.isImport = isImport;
                 this.isImportInSameCourse = isImport && exam.course?.id === data.course.id;
@@ -185,11 +192,11 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
         // TODO: is this the best solution?
         // in order to not confuse the rest of the system, the start and end dates are well in the future
         if (this.exam.hasDynamicStart) {
-            this.exam.startDate = dayjs().add(10, 'year');
-            this.exam.endDate = dayjs().add(11, 'year');
+            this.exam.startDate = undefined;
+            this.exam.endDate = undefined;
         } else {
-            this.exam.startDate = dayjs();
-            this.exam.endDate = dayjs();
+            this.exam.plannedStartDate = undefined;
+            this.exam.plannedEndDate = undefined;
         }
     }
 
@@ -242,6 +249,11 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * If either the user confirms the modal, the exam is not ongoing or the dates have not changed, the exam is saved.
      */
     handleSubmit() {
+        if (this.exam.hasDynamicStart) {
+            this.exam.startDate = dayjs(this.exam.plannedStartDate);
+            this.exam.endDate = dayjs(this.exam.plannedEndDate);
+        }
+
         const datesChanged = !(this.exam.startDate?.isSame(this.originalStartDate) && this.exam.endDate?.isSame(this.originalEndDate));
 
         if (datesChanged && this.isOngoingExam) {
@@ -408,7 +420,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * @returns {boolean} `true` if the exam's start date is set, `false` otherwise.
      */
     get isStartDateSet(): boolean {
-        return !!this.exam.startDate;
+        return !!this.exam.startDate || !!this.exam.plannedStartDate;
     }
 
     /**
@@ -417,7 +429,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * @returns {boolean} `true` if the start date is valid, `false` otherwise.
      */
     get isValidStartDateValue(): boolean {
-        return dayjs(this.exam.startDate).isValid();
+        return dayjs(this.exam.startDate || this.exam.plannedStartDate).isValid();
     }
 
     /**
@@ -430,7 +442,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
             if (this.exam.testExam) {
                 return dayjs(this.exam.startDate).isSameOrAfter(this.exam.visibleDate);
             } else {
-                return dayjs(this.exam.startDate).isAfter(this.exam.visibleDate);
+                return dayjs(this.exam.startDate || this.exam.plannedStartDate).isAfter(this.exam.visibleDate);
             }
         }
         return true;
@@ -442,7 +454,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * @returns {boolean} `true` if the exam's end date is set, `false` otherwise.
      */
     get isEndDateSet(): boolean {
-        return !!this.exam.endDate;
+        return !!this.exam.endDate || !!this.exam.plannedEndDate;
     }
 
     /**
@@ -451,7 +463,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      * @returns {boolean} `true` if the end date is valid, `false` otherwise.
      */
     get isValidEndDateValue(): boolean {
-        return dayjs(this.exam.endDate).isValid();
+        return dayjs(this.exam.endDate || this.exam.plannedEndDate).isValid();
     }
 
     /**
@@ -459,7 +471,7 @@ export class ExamUpdateComponent implements OnInit, OnDestroy {
      */
     get isValidEndDate(): boolean {
         if (this.isStartDateSet && this.isValidStartDateValue) {
-            return dayjs(this.exam.endDate).isAfter(this.exam.startDate);
+            return dayjs(this.exam.endDate || this.exam.plannedEndDate).isAfter(this.exam.startDate);
         }
         return true;
     }

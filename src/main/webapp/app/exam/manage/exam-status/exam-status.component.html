@@ -111,7 +111,9 @@
         <div class="status-step-content">
             <div class="text-center mb-1">
                 <h6 jhiTranslate="artemisApp.examStatus.conduction.{{ isTestExam ? 'testExam.' : '' }}examConduction"></h6>
-                @if (!exam().hasDynamicStart) {
+                @if (exam().hasDynamicStart && exam().plannedStartDate && exam().plannedEndDate) {
+                    <b>{{ exam().plannedStartDate | artemisDate }} - {{ exam().plannedEndDate | artemisDate }}</b>
+                } @else if (!exam().hasDynamicStart) {
                     <b>{{ exam().startDate | artemisDate }} - {{ exam().endDate | artemisDate }}</b>
                 }
             </div>
