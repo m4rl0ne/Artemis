@@ -66,6 +66,9 @@
                                         @if (exam.testExam) {
                                             <div class="badge bg-primary" jhiTranslate="artemisApp.examManagement.testExam.testExam"></div>
                                         }
+                                        @if (exam.hasDynamicStart) {
+                                            <div class="badge bg-warning">Manueller Start</div>
+                                        }
                                     </ng-container>
                                 </td>
                                 <td class="d-md-table-cell">
